@@ -23,7 +23,7 @@ class ClientGenerator(sim.Component):
 env = sim.Environment(trace=True, time_unit='seconds')
 
 iat = 10
-server_time = 8
+server_time = 5
 
 system = sim.Queue("system")
 

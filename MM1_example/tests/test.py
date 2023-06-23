@@ -4,7 +4,8 @@ import warnings
 
 import sys
 # Add parent folder to root
-from ... import MM1_example
+# from ... import MM1_example
+sys.path.append("C:\\Users\\Ferd\\Desktop\\Thesis\\MBT-sim\\MM1_example")
 # Import the SUT simulation model
 from MM1 import *
 
@@ -207,14 +208,11 @@ class MM1_FIFO(unittest.TestCase):
                 ts_in_queue = servers.requesters().head().creation_time()  # Timestamp of entity in queue
                 self.assertLess(ts_in_service, ts_in_queue)
 
-        # Length of stay in requesters queue
-        requesters_length_of_stay = [entity.length_of_stay for entity in
-                                     servers.requesters().as_list()]  # List of lengths of stay
-        delta_length_of_stay = np.diff(requesters_length_of_stay)  # Differences between values
-        # FIFO: See if all deltas are either all positive or all negative
-        bool_deltas_positive = all(x >= 0 for x in delta_length_of_stay)
-        bool_deltas_negative = all(x <= 0 for x in delta_length_of_stay)
-        self.assertTrue(bool_deltas_positive or bool_deltas_negative)
+        # Creation time of requesters in queue
+        requesters_creation_times = [entity.creation_time() for entity in servers.requesters()]
+        delta_creation_times = np.diff(requesters_creation_times) # Difference between values
+        # FIFO: See if all difference in values are positive
+        self.assertTrue(all(x>=0 for x in delta_creation_times))
 
         # Advance time and update data
         advance_and_update_data(self, data)
