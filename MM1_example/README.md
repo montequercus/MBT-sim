@@ -5,7 +5,7 @@ The system under test (SUT) is a discrete-event simulation model made using sala
 # Instructions
 The test script can be run in the CLI as follows:
 ```
-altwalker online -m models/MM1_FIFO.json "random(length(500))" 
+altwalker online -m models/MM1_FIFO.json "random(length(500))" tests
 ```
 
 ### Explanation of generator option
