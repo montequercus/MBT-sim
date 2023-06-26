@@ -1,6 +1,8 @@
 import unittest
 import numpy as np
 import warnings
+from scipy import stats
+import math
 
 import sys
 # Add parent folder to root
@@ -28,14 +30,77 @@ def advance_and_update_data(self, data):
     self.mem_num_in_service.append(servers.claimers().length()) # Number of entities in service
     self.mem_num_in_service = self.mem_num_in_service[-2:] # Keep last two entries
 
+def ttest_assert(self, result, alpha):
+    """
+    Perform t-test on dictionary that contains data and analytical mean.
+    self: associated test class
+    result: dict
+    alpha: float
+    """
+    [result['t statistic'], result['p value']] = stats.ttest_1samp(result['data'], popmean=result['mean many runs'])
+    self.assertGreater(result['p value'], alpha,
+                       msg = f"Test of mean of {result['name']} has rejected the hypothesis. \n time: {env.now()} \n p-value: {result['p value']} \n alpha: {alpha} \n calculated mean: {result['mean']} \n analytical mean: {result['mean analytical']}")
+
 class MM1_FIFO(unittest.TestCase):
     def setUpModel(self):
         # Initialize memory lists used for asserts
         self.mem_num_in_system = [] # Number of entities in 'system'
         self.mem_num_in_service = [] # Number of entities in 'claimers' queue of 'servers'
 
+        # Warn if steady-state will likely not be reached
+        if server_time >= iat:
+            warnings.warn(f"Queue is likely not stable, given the conditions: inter-arrival time = {iat}, server_time = {server_time} ")
+
     def tearDownModel(self):
-        pass
+        """
+        End of model run. Get statistics from end result, and compare to analytical solution, with a 85% confidence interval.
+        """
+        # Setting: confidence level
+        alpha = 0.05 # Confidence level
+
+        # Constants for analytical solutions
+        lambd = 1 / iat
+        mu = 1 / server_time
+        rho = lambd / mu # Utilization percentage of server
+
+        # Data points, mean values, and analytical solution for level monitors
+        L_system = {
+            "name": "Number of items in system",
+            "data": system.length.tx()[1],
+            "mean": system.length.mean(), # Time-average
+            "mean analytical": rho / (1 - rho),
+            "mean many runs": 0.997549
+        }
+        L_queue = {
+            "name": "Number of items in queue",
+            "data": servers.requesters().length.tx()[1],
+            "mean": servers.requesters().length.mean(), # Time-average
+            "mean analytical": (rho**2) / (1 - rho),
+            "mean many runs": 0.497968
+        }
+        W_system = { # Time in system
+            "name": "Time in system",
+            "data": system.length_of_stay.tx()[1],
+            "mean": system.length_of_stay.mean(),
+            "mean analytical": 1 / (mu - lambd),
+            "mean many runs": 9.972747
+        }
+        W_queue = {
+            "name": "Time in queue",
+            "data": servers.requesters().length_of_stay.tx()[1],
+            "mean": servers.requesters().length_of_stay.mean(),
+            "mean analytical": rho / (mu - lambd),
+            "mean many runs": 4.977556
+        }
+
+        # Significance testing
+        ttest_assert(self, L_system, alpha)
+        ttest_assert(self, L_queue, alpha)
+        ttest_assert(self, W_system, alpha)
+        ttest_assert(self, W_queue, alpha)
+
+
+
 
     def v_NoStepYet(self):
         """

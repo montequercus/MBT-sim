@@ -4,10 +4,10 @@ from itertools import count
 ## Adapted from M/M/c example, found on: https://github.com/salabim/salabim/blob/master/sample%20models/MMc%20animated.py
 
 class Client(sim.Component):
-    _ids = count(0) # Assign IDs to instances of class, in order to count them
+    # _ids = count(0) # Assign IDs to instances of class, in order to count them
     def process(self):
         # Count instances of class
-        self.id = next(self._ids)
+        # self.id = next(self._ids)
         # Salabim instructions
         self.enter(system)
         yield self.request(servers)
@@ -20,7 +20,7 @@ class ClientGenerator(sim.Component):
             Client()
             yield self.hold(sim.Exponential(iat, 'seconds').sample())
 
-env = sim.Environment(trace=True, time_unit='seconds')
+env = sim.Environment(trace=False, time_unit='seconds')
 
 iat = 10
 server_time = 5

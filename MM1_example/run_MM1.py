@@ -1,4 +1,6 @@
 from MM1 import *
+import pandas as pd
+from scipy import stats
 # import unittest
 #
 # class Testing(unittest.TestCase):
@@ -8,38 +10,33 @@ from MM1 import *
 # def start_queue_length():
 #     print(env.trace())
 
-def print_levels():
-    print(f"{env.now():.3f}. Number of items in 'system' Queue: {system.length()}")
-    print(f"{env.now():.3f}. Number of items in 'servers' Resource's requesters: {servers.requesters().length()}")
-    print(f"{env.now():.3f}. Number of items in 'servers' Resource's claimers: {servers.claimers().length()}")
+def print_levels(system, servers):
+    print("Mean values of results:")
+    print(f"{env.now():.3f}. L: Number of items in 'system': {system.length.mean():.3f}")
+    print(f"{env.now():.3f}. L_q: Number of items in requesters of 'servers': {servers.requesters().length.mean():.3f}")
+    print(f"{env.now():.3f}. L_s: Number of items in claimers of 'servers': {servers.claimers().length.mean():.3f}")
+    print(f"{env.now():.3f}. W_q: Length of stay in requesters of 'servers': {servers.requesters().length_of_stay.mean():.3f}")
+    print(f"{env.now():.3f}. W_s: Length of stay in claimers of 'servers': {servers.claimers().length_of_stay.mean():.3f}")
 
 ## Time 0: Check if elements have been made
 
-def get_creation_times(servers):
-    requesters_creation_times = [entity.creation_time() for entity in servers.requesters()]
+env.run(till=100000)
 
-env.print_info()
-env.step()
-print(env.now())
-print(servers.claimers().head())
-env.step()
-print(env.now())
-print(servers.claimers().head())
-env.step()
-get_creation_times(servers)
-env.step()
-get_creation_times(servers)
-env.step()
-get_creation_times(servers)
-env.step()
-get_creation_times(servers)
-env.step()
-get_creation_times(servers)
-env.step()
-get_creation_times(servers)
-env.step()
-get_creation_times(servers)
+rho = 1/2
 
+L_system_dict = {
+            "data": system.length.tx()[1],
+            "mean": system.length.mean(),
+            "mean analytical": rho / (1 - rho)
+        }
+
+# Significance testing
+[t_value, p_value] = stats.ttest_1samp(L_system_dict['data'], popmean=L_system_dict['mean analytical'])
+
+print(t_value)
+
+system.print_statistics()
+print_levels(system,servers)
 
 
 
