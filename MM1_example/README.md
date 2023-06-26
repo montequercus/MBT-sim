@@ -16,11 +16,24 @@ Some public AltWalker examples use generator options like `random(vertex_coverag
 # Progress
 The test script currently checks the dynamic behaviour of the simulation model. 
 
-The steady-state behaviour is tested after the simulation run finishes, in the function `tearDownModel()`. Statistics are calculated for the results, and a student t test is done with the analytical solution. This test will likely fail (the main is not within the confidence interval), because:
+The steady-state behaviour is tested after the simulation run finishes, in the function `tearDownModel()`. This still gives a problem, see next paragraph.
+
+*To do:* Change to SUT to versions of the simulation model that have some fault built in. See how the test can be used to detect these faults.
+
+## Problem with steady-state solution
+Statistics are calculated for the results, and a student t test is done with the analytical solution. The problem is that the model is supposed to pass the test, meaning that the mean should be within the 95% confidence interval of the given analytical solutions.
+Therefore, the test suite will currently show FAIL for the vertex `tearDownModel`. This can have two reasons:
 1. The simulation time may be too low to reach a steady-state solution.
 2. Even for high simulation time, the Salabim model will output a slightly lower mean than the analytical solution.
 
-*To do:* Change to SUT to versions of the simulation model that have some fault built in. See how the test can be used to detect these faults.
+To prove the last point, the Salabim model was run 1000 times with a long simulated time (100,000 seconds). The means of outcomes are on average lower than the analytical solution, see the table.
+
+| outcome |  mean (analytical)   | mean of mean of model outcomes     | std. dev. |
+| ------- | --- | -------- | --------- |
+| $L$: Number of entities in system    |   1  | 0.997549 | 0.03478   |
+| $L_q$: Number of entities in queue|   0.5  | 0.497968 | 0.029174  |
+| $W$: Time in system  |   10  | 9.972747 | 0.300375  |
+| $W_q$: Time in queue  |  5   | 4.977556 | 0.268531  |
 
 # Description
 ## Abstract model
