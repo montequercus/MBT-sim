@@ -14,9 +14,13 @@ The generator option `random(length(500))` will result in a randomly generated t
 Some public AltWalker examples use generator options like `random(vertex_coverage(100))` and `random(edge_coverage(100))`. Those would make paths were 100% of the vertices or edges in the model are covered. However, in this example, 100% coverage cannot be guaranteed. Guards prevent the 
 
 # Progress
-The test script currently checks the dynamic behaviour of the simulation model. After running for some time, bugs and/or failed tests will be encountered. This has to be fixed.
+The test script currently checks the dynamic behaviour of the simulation model. 
 
-The test script has to be extended to consider the steady-state behaviour of the M/M/1 queue as well.
+The steady-state behaviour is tested after the simulation run finishes, in the function `tearDownModel()`. Statistics are calculated for the results, and a student t test is done with the analytical solution. This test will likely fail (the main is not within the confidence interval), because:
+1. The simulation time may be too low to reach a steady-state solution.
+2. Even for high simulation time, the Salabim model will output a slightly lower mean than the analytical solution.
+
+*To do:* Change to SUT to versions of the simulation model that have some fault built in. See how the test can be used to detect these faults.
 
 # Description
 ## Abstract model
