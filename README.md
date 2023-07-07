@@ -35,7 +35,7 @@ This Python script has to be edited to installed the correct version of Graphwal
 
 Before running the Python script (again), ensure that the installation folder does not exist yet. On Windows, it is placed in the Home folder. Its path would be 'C:/Users/<user>/graphwalker'. 
 
-After installation, the file 'gw.bat' must be added to the `PATH` variable, in order for AltWalker to function. This can be done manually. This file will be located in the aforementioned 'graphwalker' folder.
+After installation, the file 'gw.bat' or 'gw.sh' must be added to the `PATH` variable in order for AltWalker to function. This can be done manually. This file will be located in the aforementioned 'graphwalker' folder.
 
 ### GraphWalker Studio
 GraphWalker Studio can be optionally installed to visualize the abstract models (.json files) that AltWalker uses. The Java .jar file can be downloaded from the [GraphWalker site](https://graphwalker.github.io/).
