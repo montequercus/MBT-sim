@@ -16,18 +16,26 @@ The `unittest` and `warnings` packages will be installed when `altwalker` is ins
 
 The following version of other software is used:
 - Python 3.7.13
-- Java 8
+- Java 11
 - GraphWalker 4.3.2
 
 # Installation
 ## GraphWalker
 The GraphWalker CLI can downloaded from its [repository](https://graphwalker.github.io/). With the given instructions, it is then installed using Java. However, this gave the error `Missing a command` on my system.
 
-An alternative is to use the installation instruction from [AltWalker's site](https://altwalker.github.io/altwalker/installation.html#graphwalker). The GraphWalker repository is cloned using git, and installed using a Python script. 
+An alternative is to use the installation instruction from [AltWalker's site](https://altwalker.github.io/altwalker/installation.html#graphwalker). The GraphWalker repository is cloned using git, and installed using a Python script:
 
-In line 170 of 'install-graphwalker.py', `version = "latest"` can be replaced by `version = "4.3.2"`, to ensure that no snapshot version is installed. Line 148 can be commented out or deleted for Windows machines, to ensure that the `PATH` environment variable is not overwritten. 
+```
+> git clone https://github.com/altwalker/graphwalker-installer.git
+> cd graphwalker-installer
+> python install-graphwalker.py
+```
 
-The file 'gw.bat' must be added to the `PATH` variable, in order for AltWalker to function. This can be done manually.
+This Python script has to be edited to installed the correct version of Graphwalker. The edited version is included in this repository. Alternatively, the edits to the file can be made manually: In line 170 of 'install-graphwalker.py', `version = "latest"` can be replaced by `version = "4.3.2"`, to ensure that no snapshot version is installed. Line 148 can be commented out or deleted for Windows machines, to ensure that the `PATH` environment variable is not overwritten. 
+
+Before running the Python script (again), ensure that the installation folder does not exist yet. On Windows, it is placed in the Home folder. Its path would be 'C:/Users/<user>/graphwalker'. 
+
+After installation, the file 'gw.bat' must be added to the `PATH` variable, in order for AltWalker to function. This can be done manually. This file will be located in the aforementioned 'graphwalker' folder.
 
 ### GraphWalker Studio
 GraphWalker Studio can be optionally installed to visualize the abstract models (.json files) that AltWalker uses. The Java .jar file can be downloaded from the [GraphWalker site](https://graphwalker.github.io/).
