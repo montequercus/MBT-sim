@@ -1,13 +1,11 @@
 import salabim as sim
-from itertools import count
+import random
+import json # For importing parameter values
 
 ## Adapted from M/M/c example, found on: https://github.com/salabim/salabim/blob/master/sample%20models/MMc%20animated.py
 
 class Client(sim.Component):
-    # _ids = count(0) # Assign IDs to instances of class, in order to count them
     def process(self):
-        # Count instances of class
-        # self.id = next(self._ids)
         # Salabim instructions
         self.enter(system)
         yield self.request(servers)
@@ -20,10 +18,34 @@ class ClientGenerator(sim.Component):
             Client()
             yield self.hold(sim.Exponential(iat, 'seconds').sample())
 
-env = sim.Environment(trace=False, time_unit='seconds')
+## Import parameter values
+bool_use_settings_file = False
 
-iat = 10
-server_time = 5
+if bool_use_settings_file:
+    with open('SUT_settings.json', 'r') as f:
+        params = json.load(f)
+
+    print(f"(Replication according to SUT: {params['rep_num']}")
+    seed = params['seed']
+    # seed = 10
+    iat = params['iat']  # Inter-arrival time (mean)
+    server_time = params['server_time']  # Time in server (mean)
+else:
+    iat = 10
+    server_time = 5
+    seed = 1
+    # random.seed()
+    # seed = random.randint(0,1234567)
+
+
+
+
+# seed = 1234567
+# iat = 10
+# server_time = 5
+
+## Initialize model
+env = sim.Environment(trace=False, time_unit='seconds', random_seed=seed)
 
 system = sim.Queue("system")
 
@@ -32,7 +54,6 @@ servers = sim.Resource(name="servers", capacity=1)
 ClientGenerator()
 
 # do_animation()
-# env.run(till=50)
 
 
 ## Statistics
@@ -47,24 +68,24 @@ def make_outputs(system,servers):
     W_s = servers.claimers().length_of_stay.mean()
     W_server = W_q + W_s
 
-    system.print_statistics()
-    servers.print_statistics()
+    # system.print_statistics()
+    # servers.print_statistics()
+    #
+    # print(f"L: Time-average number of entities in system: {L:.3f}")
+    # print(f"L_q: Time-average number of entities in queue: {L_q:.3f}")
+    # print(f"L_s: Time-average number of entities in service: {L_s:.3f}")
+    # print(f"L_q + L_s : {L_server:.3f}")
+    #
+    # print(f"W: Average time in system: {W:.3f}")
+    # print(f"W_q: Average time in queue: {W_q:.3f}")
+    # print(f"W_s: Average time in service: {W_s:.3f}")
+    # print(f"W_q + W_s : {W_server:.3f}")
 
-    print(f"L: Time-average number of entities in system: {L:.3f}")
-    print(f"L_q: Time-average number of entities in queue: {L_q:.3f}")
-    print(f"L_s: Time-average number of entities in service: {L_s:.3f}")
-    print(f"L_q + L_s : {L_server:.3f}")
+    return L, L_q, W, W_q
 
-    print(f"W: Average time in system: {W:.3f}")
-    print(f"W_q: Average time in queue: {W_q:.3f}")
-    print(f"W_s: Average time in service: {W_s:.3f}")
-    print(f"W_q + W_s : {W_server:.3f}")
-
-
-
-
-
-# print(f"Average time in system: {system.length_of_stay.mean()}")
-# print(f"Time-average number in system: {system.length.mean()}")
-
-
+# if bool_use_settings_file:
+#     print(params)
+# else:
+#     env.run(till=650)
+#     make_outputs(system, servers)
+#     print(f"\n Seed: {seed}")
