@@ -3,6 +3,7 @@ import random
 import json # For importing parameter values
 
 ## Adapted from M/M/c example, found on: https://github.com/salabim/salabim/blob/master/sample%20models/MMc%20animated.py
+## This script only initiates a simulation model - it does not run the simulation.
 
 class Client(sim.Component):
     def process(self):
@@ -19,9 +20,10 @@ class ClientGenerator(sim.Component):
             yield self.hold(sim.Exponential(iat, 'seconds').sample())
 
 ## Import parameter values
-bool_use_settings_file = False
+bool_use_settings_file = False # True: Use settings file. False: Use predefined settings
 
 if bool_use_settings_file:
+    # Use a settings file
     with open('SUT_settings.json', 'r') as f:
         params = json.load(f)
 
@@ -31,32 +33,21 @@ if bool_use_settings_file:
     iat = params['iat']  # Inter-arrival time (mean)
     server_time = params['server_time']  # Time in server (mean)
 else:
+    # Use predefined settings and a random seed
     iat = 10
     server_time = 5
     seed = 1
-    # random.seed()
-    # seed = random.randint(0,1234567)
-
-
-
-
-# seed = 1234567
-# iat = 10
-# server_time = 5
+    random.seed()
+    seed = random.randint(0,1234567)
 
 ## Initialize model
 env = sim.Environment(trace=False, time_unit='seconds', random_seed=seed)
-
 system = sim.Queue("system")
-
 servers = sim.Resource(name="servers", capacity=1)
-
 ClientGenerator()
 
-# do_animation()
 
-
-## Statistics
+## Statistics functions
 def make_outputs(system,servers):
     L = system.length.mean()
     L_q = servers.requesters().length.mean()
