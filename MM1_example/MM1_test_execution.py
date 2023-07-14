@@ -1,10 +1,7 @@
-import unittest
 import numpy as np
-import sys
 import os
 import json # For writing SUT parameter values to a file
 import random
-import salabim
 
 from altwalker.planner import OnlinePlanner
 from altwalker.executor import PythonExecutor, create_executor
@@ -12,18 +9,18 @@ from altwalker.reporter import FileReporter, ClickReporter
 from altwalker.walker import Walker
 from altwalker.graphwalker import GraphWalkerClient, GraphWalkerService
 
-## Settings for SUT and test script
+## Settings for SUT and test execution
 num_replications = 2
 num_elements = 500 # Number of elements passed in graph for each replication
 iat = 10
 server_time = 5
 
-# Check if json file has to be made
+# Check if json file has to be made for SUT settings
 if not os.path.exists('SUT_settings.json'):
     with open('SUT_settings.json', 'w') as f:
         json.dump({}, f) # Save an empty json string
 
-## Settings for Planner: "determine the next step executed by the Executor"
+## Settings for Planner: plans next step for Executor
 current_directory = os.getcwd()
 model_path_rel = 'models\MM1_FIFO.json'
 model_path_abs = os.path.join(current_directory, model_path_rel)
@@ -38,7 +35,7 @@ seeds_used = [random.randint(0,1234567) for i in range(num_replications)]
 
 ## Run test script for each replication
 for rep in range(num_replications):
-    ## Save paramater values for SUT instance
+    ## Save paramater values for SUT instance, for this replication
     params = {'rep_num': rep,
               'seed': seeds_used[rep],
               'iat': iat,
