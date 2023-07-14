@@ -103,11 +103,29 @@ Note also that it makes no sense to run the test script on its own. It will only
 Lastly, the test execution script is a made-up name for a separate Python script, from which a model-based test can be run. This is where the `altwalker` package is used.
 Alternatively, model-based tests can be run from the CLI. This is done in this example.
 
-## Run from CLI
-The instructions for running tests from the CLI are found in [AltWalker's documentation](https://altom.gitlab.io/altwalker/altwalker/cli.html). 
-The commands that are used in the examples are: `check`, `verify`, and `online`.
+## Executing  tests
+Two types of test are distinguished for MBT: online and offline tests. Online tests are only relevant for the purpose of testing simulation models. In an online test, GraphWalker will *plan* the next element of the test path, and AltWalker will perform the associated test immediately. This allows the path generation to be influenced by the SUT's output during a simulation run.
 
-AltWalker can be added to the `PATH` environment variable, or the commands can be run while using a Python environment with `altwalker`
+A combination of an abstract model and test package can be executed in two ways:
+1. With the AltWalker command line interface (CLI).
+2. From a Python script, here called a 'test execution script'. This uses the AltWalker API.
+
+Using the CLI is convenient during the development of abstract models and test scripts. Using a Python script is great for reusability of tests. The Python functionality is extended in this project, to allow for replications of test runs.
+
+### From CLI
+The instructions for running tests from the CLI are found in [AltWalker's documentation](https://altwalker.github.io/altwalker/cli.html). 
+The CLI commands that are used in this repository's examples are: `check`, `verify`, and `online`.
+
+Running an online test is done with the `online` command. A model file and test folder must be specified. This will generate a path using a model file based on the generator settings, and execute the associated tests found in the 'tests' folder:
+
+```
+altwalker online models/<model.json> "<generator option>" tests
+```
+
+AltWalker can be added to the `PATH` environment variable, or the commands can be run while using a Python environment and starting each command with `altwalker`.
+
+### From a Python script
+The AltWalker API can be used in a Python script to run online tests. This project will use the term 'test execution script' for this method. The documentation for the AltWalker API can be found [here](https://altwalker.github.io/altwalker/api.html). 
 
 
 
