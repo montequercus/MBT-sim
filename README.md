@@ -66,9 +66,11 @@ pip install mesa
 
 
 # Running tests with AltWalker
-Tests can be run from within Python by using the AltWalker API and `Walker` functionality. This can be done as a separate "test execution script".
+A combination of an abstract model and test package can be executed in two ways:
+1. From the command line, by using AltWalker's CLI.
+2. From a Python script, here called a 'test execution script'. This uses the AltWalker API.
 
-Alternatively, tests are run from the CLI. This is done in the *M/M/1 example*
+Using the CLI is convenient during the development of abstract models and test scripts. Using a Python script is great for reusability of tests. The Python functionality is extended in this project, to allow for replications of test runs.
 
 ## File structure
 It is important to note the required file structure of a test project. Taken from  [AltWalker's documentation](https://altom.gitlab.io/altwalker/altwalker/cli.html):
@@ -103,15 +105,10 @@ Note also that it makes no sense to run the test script on its own. It will only
 Lastly, the test execution script is a made-up name for a separate Python script, from which a model-based test can be run. This is where the `altwalker` package is used.
 Alternatively, model-based tests can be run from the CLI. This is done in this example.
 
-## Executing  tests
-Two types of test are distinguished for MBT: online and offline tests. Online tests are only relevant for the purpose of testing simulation models. In an online test, GraphWalker will *plan* the next element of the test path, and AltWalker will perform the associated test immediately. This allows the path generation to be influenced by the SUT's output during a simulation run.
+## Online tests
+Two types of test are distinguished for MBT: online and offline tests. Offline tests are not relevant for the purpose of testing simulation models. Online tests allow the path generation to be based on the SUT's output. In an online test, GraphWalker will *plan* the next element of the test path, and AltWalker will *execute* the associated test subsequently. The associated test may contain commands for the SUT. By using guards in the abstract model, the planning of the next element on the test path can thus be based on the SUT's output.
 
-A combination of an abstract model and test package can be executed in two ways:
-1. With the AltWalker command line interface (CLI).
-2. From a Python script, here called a 'test execution script'. This uses the AltWalker API.
-
-Using the CLI is convenient during the development of abstract models and test scripts. Using a Python script is great for reusability of tests. The Python functionality is extended in this project, to allow for replications of test runs.
-
+## Running tests
 ### From CLI
 The instructions for running tests from the CLI are found in [AltWalker's documentation](https://altwalker.github.io/altwalker/cli.html). 
 The CLI commands that are used in this repository's examples are: `check`, `verify`, and `online`.
