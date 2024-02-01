@@ -1,5 +1,7 @@
 # Introduction
-The goal of these examples is to show how model-based testing (MBT) can be applied to a simulation model. This document describes the required software to run the examples, how to install them, and what potential problems there are.
+The goal of these examples is to show how model-based testing (MBT) can be applied to a simulation model. Three test packages for three simple simulation models have been developed for a thesis project on this topic. The thesis report can be found [here](https://repository.tudelft.nl/islandora/object/uuid:7a6ee58b-af74-450a-a54b-8511aae898e6?collection=education). 
+
+This documentation describes the required software to run the examples, how to install them, and what potential problems there are. 
 
 The open-source testing framework [AltWalker](https://altom.gitlab.io/altwalker/altwalker/) is used for model-based testing. It can run tests that are written in Python using the [unittest](https://docs.python.org/3/library/unittest.html) package. AltWalker uses GraphWalker to generate test paths. [GraphWalker](http://graphwalker.github.io/) is an open-source software package written in Java.
 
@@ -12,7 +14,7 @@ The following versions of the mentioned Python packages are used:
 - mesa 0.8.8.1
 - numpy 1.21.5
 
-The `unittest` and `warnings` packages will be installed when `altwalker` is installed.
+The `logger` package is used as well in some scripts. The `unittest` and `warnings` packages are used as well; these will be installed when `altwalker` is installed.
 
 The following version of other software is used:
 - Python 3.7.13
@@ -31,14 +33,14 @@ An alternative is to use the installation instruction from [AltWalker's site](ht
 > python install-graphwalker.py
 ```
 
-This Python script has to be edited to installed the correct version of Graphwalker. The edited version is included in this repository. Alternatively, the edits to the file can be made manually: In line 170 of 'install-graphwalker.py', `version = "latest"` can be replaced by `version = "4.3.2"`, to ensure that no snapshot version is installed. Line 148 can be commented out or deleted for Windows machines, to ensure that the `PATH` environment variable is not overwritten. 
+This Python script has to be edited to install the correct version of Graphwalker. The edited version is included in this repository. Alternatively, the edits to the file can be made manually: In line 170 of 'install-graphwalker.py', `version = "latest"` can be replaced by `version = "4.3.2"`, to ensure that no snapshot version is installed. Line 148 can be commented out or deleted for Windows machines, to ensure that the `PATH` environment variable is not overwritten. 
 
 Before running the Python script (again), ensure that the installation folder does not exist yet. On Windows, it is placed in the Home folder. Its path would be 'C:/Users/<user>/graphwalker'. 
 
 After installation, the file 'gw.bat' or 'gw.sh' must be added to the `PATH` variable in order for AltWalker to function. This can be done manually. This file will be located in the aforementioned 'graphwalker' folder.
 
 ### GraphWalker Studio
-GraphWalker Studio can be optionally installed to visualize the abstract models (.json files) that AltWalker uses. The Java .jar file can be downloaded from the [GraphWalker site](https://graphwalker.github.io/).
+GraphWalker Studio can be optionally installed to visualize and edit the abstract models (.json files) that AltWalker uses. The Java .jar file can be downloaded from the [GraphWalker site](https://graphwalker.github.io/).
 
 Studio can be used by running the command
 ```
@@ -47,12 +49,12 @@ java -jar graphwalker-studio-4.3.2.jar
 And then by opening the URL `http://localhost:9090/studio.html`
 
 ## AltWalker
-AltWalker can be installed using the [AltWalker installation instructions](<`version = "4.3.2"`>). Three prerequisites are listed:
+AltWalker can be installed using the [AltWalker installation instructions](https://altwalker.github.io/altwalker/installation.html). Three prerequisites are listed:
 - Python3, with pip3
 - Java 11
 - GraphWalker CLI
 
-Installation is done through pip:
+Installation can be done through pip:
 ```
 pip install altwalker
 ```
@@ -68,9 +70,9 @@ pip install mesa
 # Running tests with AltWalker
 A combination of an abstract model and test package can be executed in two ways:
 1. From the command line, by using AltWalker's CLI.
-2. From a Python script, here called a 'test execution script'. This uses the AltWalker API.
+2. From a Python script, here called a 'test execution script' (TES). This uses the AltWalker API.
 
-Using the CLI is convenient during the development of abstract models and test scripts. Using a Python script is great for reusability of tests. The Python functionality is extended in this project, to allow for replications of test runs.
+Using the CLI is convenient during the development of abstract models and test scripts. Using a Python script is great for reusability of tests. The Python functionality is extended in this project, to allow for multiple test cases to be executed in series, using different input parameters.
 
 ## File structure
 It is important to note the required file structure of a test project. Taken from  [AltWalker's documentation](https://altom.gitlab.io/altwalker/altwalker/cli.html):
@@ -121,8 +123,19 @@ altwalker online models/<model.json> "<generator option>" tests
 
 AltWalker can be added to the `PATH` environment variable, or the commands can be run while using a Python environment and starting each command with `altwalker`.
 
+Only the _Airport_ from this repository is made to be run from the CLI, but it also has a test execution script.
+
 ### From a Python script
 The AltWalker API can be used in a Python script to run online tests. This project will use the term 'test execution script' for this method. The documentation for the AltWalker API can be found [here](https://altwalker.github.io/altwalker/api.html). 
+
+# Example test packages
+Three simple simulation models are used as systems under test (SUT). A test package is developed for each one. A short description of the SUTs and how tests can be run is given in this table:
+
+| System under test (SUT) | SUT Model type                                 | SUT model language | SUT description                                                  | Options for test execution                                                   |
+|-------------------------|------------------------------------------------|--------------------|------------------------------------------------------------------|------------------------------------------------------------------------------|
+| Two-way switch          | Agent-based model                              | Mesa               | A light that is controlled by two switches                       | One run from test execution script                                           |
+| M/M/1 queue             | Discrete event simulation, process interaction | Salabim            | A standard M/M/1 queue                                           | One run from test execution script, Multiple runs from test execution script |
+| Airport                 | Agent-based model                              | Salabim            | Two servers with queues in series, with a random arrival process | One run from test exectution script, One run from CLI                        |
 
 
 
