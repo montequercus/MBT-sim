@@ -22,7 +22,7 @@ stop_condition = "random(vertex_coverage(100))" # All vertices of 'process graph
 model_specification = [(model_path_abs, stop_condition)]
 
 np.random.seed()
-gw_port = np.random.randint(5000, 10000)
+gw_port = 6000
 gw_client = GraphWalkerClient(host='127.0.0.1', verbose=False, port=gw_port)
 gw_service = GraphWalkerService(models=model_specification, port=gw_port)
 planner = OnlinePlanner(client=gw_client, service=gw_service)
@@ -42,6 +42,7 @@ with open('SUT_parameter_settings.json', 'w') as f:
 
 # Execute AltWalker test package
 walker = Walker(planner, executor, reporter)
-walker.run()
+walker.run() # Run test model
+gw_service.kill() # Stop Java process
 
 
