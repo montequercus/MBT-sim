@@ -139,8 +139,8 @@ Three simple simulation models are used as systems under test (SUT). A test pack
 | System under test (SUT) | SUT Model type                                 | SUT model language | SUT description                                                  | Options for test execution                                                   |
 |-------------------------|------------------------------------------------|--------------------|------------------------------------------------------------------|------------------------------------------------------------------------------|
 | Two-way switch          | Agent-based model                              | Mesa               | A light that is controlled by two switches                       | One run from test execution script                                           |
-| M/M/1 queue             | Discrete event simulation, process interaction | Salabim            | A standard M/M/1 queue                                           | One run from test execution script, Multiple runs from test execution script |
-| Airport                 | Agent-based model                              | Salabim            | Two servers with queues in series, with a random arrival process | One run from test exectution script, One run from CLI                        |
+| M/M/1 queue             | Discrete event simulation, process interaction | Salabim            | A standard M/M/1 queue                                           | One run from CLI, One run from test execution script, Multiple runs from test execution script |
+| Airport                 | Agent-based model                              | Salabim            | Two servers with queues in series, with a random arrival process | One run from CLI, One run from test execution script                        |
 
 
 
