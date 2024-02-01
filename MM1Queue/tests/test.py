@@ -13,7 +13,8 @@ import sys
 ## Add parent directory to path
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 sys.path.append(parent_dir)
-import MM1_new as MM1 # Import SUT from parent folder
+# import MM1_new as MM1 # Import SUT from parent folder
+from . import MM1_new as MM1
 
 ## Setting: Test statistics in 'tearDownModel' or not. Set to False when multiple replications are to be performed
 
