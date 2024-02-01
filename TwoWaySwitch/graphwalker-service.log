@@ -1,0 +1,8 @@
+Feb 01, 2024 12:38:24 PM com.sun.jersey.server.impl.application.WebApplicationImpl _initiate
+INFO: Initiating Jersey application, version 'Jersey: 1.19.4 05/24/2017 03:20 PM'
+Feb 01, 2024 12:38:26 PM org.glassfish.grizzly.http.server.NetworkListener start
+INFO: Started listener bound to [0.0.0.0:8259]
+Feb 01, 2024 12:38:26 PM org.glassfish.grizzly.http.server.HttpServer start
+INFO: [HttpServer] Started.
+Try http://localhost:8259/graphwalker/hasNext or http://localhost:8259/graphwalker/getNext
+Press Control+C to end...
