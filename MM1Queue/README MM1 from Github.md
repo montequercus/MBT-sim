@@ -1,73 +1,58 @@
-This is example applies model-based testing (MBT) to a simulation model of a M/M/1 queue. 
+This example applies model-based testing (MBT) to a simulation model of a M/M/1 queue. 
 The system under test (SUT) is a discrete-event simulation model made using salabim. It is taken from the [MMc example](https://github.com/salabim/salabim/blob/master/sample%20models/MMc.py) of salabim.
 
 
-# Instructions
-The test script can be run in the CLI as follows:
+# How to run
+
+## Options for test execution
+There are three options to run the test package
+
+## 1. One run from CLI
+The test package can be run in the CLI, in a Python environment that has `altwalker`, from this folder as follows:
 ```
-altwalker online -m models/MM1_FIFO.json "random(length(500))" tests
+altwalker online -m models/MM1_FIFO_with_s_and_fail.json "weighted_random(requirement_coverage(100) or length(100000))" tests
 ```
 
-### Explanation of generator option
-The generator option `random(length(500))` will result in a randomly generated test path of 500 elements (vertices or edges). Of course, this number can be changed. A higher number of elements will simply give more times that the SUT's simulation time is advanced, in this case.
+This will do one test run at the standard settings defined in the test script `test.py` and SUT.
 
-Some public AltWalker examples use generator options like `random(vertex_coverage(100))` and `random(edge_coverage(100))`. Those would make paths were 100% of the vertices or edges in the model are covered. However, in this example, 100% coverage cannot be guaranteed. Guards prevent the 
+## 2. One run from a test execution script
+The test execution script `MM1_test_execution_one_run.py` can be executed in a Python environment that has `altwalker`. This will run a test for one simulation run of the SUT.
 
-# Progress
-The test script currently checks the dynamic behaviour of the simulation model. 
+The following variables of the SUT can be set from the test execution script. Note that these are passed to the SUT via graph variables:
+- `iat`: inter-arrival time in seconds
+- `server_time`: server time in seconds
+- `seed`: seed used in SUT by Salabim
 
-The steady-state behaviour is tested after the simulation run finishes, in the function `tearDownModel()`. This still gives a problem, see next paragraph.
+The following graph variables (of the abstract model) can be set from the test execution script, to influence the test run:
+- `t_end`: Simulation end time. When the SUT reaches this logical time, the test should end. Note: the simulation will not end at exactly this logical time, but at the first event that comes after it.
 
-*To do:* Change to SUT to versions of the simulation model that have some fault built in. See how the test can be used to detect these faults.
+The following AltWalker settings can be set from the test execution script:
+- `bool_print_paths`: Boolean to print test paths with `ClickReporter()` if True, or to execute without printing paths if False.
 
-## Problem with steady-state solution
-Statistics are calculated for the results, and a student t test is done with the analytical solution. The problem is that the model is supposed to pass the test, meaning that the mean should be within the 95% confidence interval of the given analytical solutions.
-Therefore, the test suite will currently show FAIL for the vertex `tearDownModel`. This can have two reasons:
-1. The simulation time may be too low to reach a steady-state solution.
-2. Even for high simulation time, the Salabim model will output a slightly lower mean than the analytical solution.
+## 3. Multiple runs with sampled input parameters from a test execution script
+The test execution script `MM1_test_execution_batch_run.py` can be executed in a Python environment that has `altwalker`. This will tests multiple simulation runs of the SUT. A new GraphWalker service and client, and new AltWalker API objects, are made for each new simulation run that is tested. 
 
-To prove the last point, the Salabim model was run 1000 times with a long simulated time (100,000 seconds). The means of outcomes are on average lower than the analytical solution, see the table.
+The input parameter `server_time` is now sampled from a range. The `seed` used by the SUT is now randomly generated.
 
-| outcome |  mean (analytical)   | mean of mean of model outcomes     | std. dev. |
-| ------- | --- | -------- | --------- |
-| $L$: Number of entities in system    |   1  | 0.997549 | 0.03478   |
-| $L_q$: Number of entities in queue|   0.5  | 0.497968 | 0.029174  |
-| $W$: Time in system  |   10  | 9.972747 | 0.300375  |
-| $W_q$: Time in queue  |  5   | 4.977556 | 0.268531  |
+The experimental setup can be changed from the test execution script using:
+- `num_experiments`: The number of sets of input parameters for which the SUT is tested.
+- `num_replications`: The number of replications, meaning the number of times that one set of input parameters is tested again on the SUT, using different seeds each time.
 
-# Description
-## Abstract model
-The abstract model looks like this in GraphWalker Studio:
-![[MM1_abstract_model.png]]
+### Verification of results
+The goal of running tests with different input parameters is to verify that the SUT's results are correct, given the analytical solutions that are known for a M/M/1 queue. The test model will therefore give a verdict at the end of each test case, on whether the time-average (steady-state) values for $\rho$ and $\delta / W$ are as expected. Furthermore, the test execution script can therefore collect the end results of multiple SUT runs, and do further analysis.
 
-### Variables (graph data)
-The abstract model has two variables (graph data):
-1. `t`: simulation time
-2. `q`: number of clients in queue
-In this example, the abstract model and test script are set up such that the graph data is only updated through the test script, based on the SUT output. Thus, the variables `t` and `q` are only declared (with JavaScript) in the abstract model file.
-The graph data is used for guards on all edges.
+The following settings can be changed for the analysis of results:
+- `accepted deviation occupancy`: The accepted deviation from the analytical solution for the occupancy $\rho$. Thus: $(|\rho_{analytical} - \rho| / \rho_{analytical}) * 100%$.
+- `accepted_deviation_delta_relative`: The accepted deviation of Little's law, defined as $\delta = |W - L / \lambda|$, as a percentage of the results for $W$. Thus: $(|W - L / \lambda| / W) * 100%$.
+- `min_perc_within_bandwidth_occupancy`: The minimum percentage of runs that should have a time-average $\rho$ that is within the accepted range.
+- `min_perc_witinh_bandwidth_delta_relative`: The minimum percentage of runs that should have a time-average $\delta / W$ that is within the accepted range.
 
-The definition of `queue` is important to note. In the SUT, the queue is specifically the Queue instance `servers.requesters()`. This is the queue that clients will enter, when there is already a client in `servers.claimers()` (which confusingly is also a Queue instance). 
+Note that the variance in results is highly dependent on the simulation end time. The variance only becomes steady after $t = 100000$ s (approximately). However, running a test until this logical time would result in very high execution times. 
 
-### Concept
-The abstract model is largely based on the state of the queue. The three most important states are:
-1. None are in queue.
-2. One is in queue.
-3. Multiple are in queue.
-The edges between these states have guards of the variable `q`, the number of people in queue.
-
-With this set-up, the random path generation of AltWalker actually has little options to be random. This is because there are significant guards on all edges
-
-## Test script
-*To be written.*
-
-### Time advancement
-The simulation time of the SUT is advanced by using its `step()` function. This advances time to the next scheduled event, and thereby executes the event.
-
-In this example, the `step()` function is often placed at the end of a vertex's method. It may seem more intuitive to place time advancement on an edge, as it is a state transition. That is where one would place it in a FSM.
-However, the problem is that the edges also contain the guards. The next vertex that the abstract model can go to is determined by these guards. Thus, if time advancement would be placed on edges, it would be executed *after* evaluating the guards. While logically, the next event should be executed before the guards are evaluated.
+# Problem with TCP/IP
+A problem is encountered regarding communication between AltWalker and GraphWalker. This communication is done via TCP/IP. However, a new port is opened for every request. As this test package tests every event that the SUT produces, and the SUT produces many events quickly, this will eventually result in an error: your computer system will run out of TCP/IP ports. To prevent this, the test script `test.py` will pause execution after it has done 1000 time advancements of the SUT. The execution of Python is paused for 121 minutes, because all TCP/IP ports will be closed after 2 minutes on Windows.
+This value of 1000 is found by trial-and-error, with some safety margin.
 
 
-## System under test
-*To be written*
+
 
