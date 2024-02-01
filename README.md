@@ -110,6 +110,11 @@ Alternatively, model-based tests can be run from the CLI. This is done in this e
 ## Online tests
 Two types of test are distinguished for MBT: online and offline tests. Offline tests are not relevant for the purpose of testing simulation models. Online tests allow the path generation to be based on the SUT's output. In an online test, GraphWalker will *plan* the next element of the test path, and AltWalker will *execute* the associated test subsequently. The associated test may contain commands for the SUT. By using guards in the abstract model, the planning of the next element on the test path can thus be based on the SUT's output.
 
+## Problems with TCP/IP
+AltWalker and GraphWalker communicate over TCP/IP. Two issues have been found with this, that may result in errors during test execution:
+1. Your computer system may run out of TCP/IP ports. This will happen when large test paths are generated in a short time. The cause is that AltWalker opens a new port for every request to GraphWalker. No convenient solution has been found for this problem. It is most prevalent in the M/M/1 queue example. There, it has been solved by pausing the test execution for 2 minutes periodically from Python (so that all TCP/IP ports will close automatically).
+2. When an error occurs during test execution, the associated GraphWalker Java process will not be closed automatically. One should then close `java.exe` by hand. Otherwise, execution of a new run may give the error, that the port is already in use.
+
 ## Running tests
 ### From CLI
 The instructions for running tests from the CLI are found in [AltWalker's documentation](https://altwalker.github.io/altwalker/cli.html). 
