@@ -47,7 +47,7 @@ The following settings can be changed for the analysis of results:
 - `min_perc_within_bandwidth_occupancy`: The minimum percentage of runs that should have a time-average $\rho$ that is within the accepted range.
 - `min_perc_witinh_bandwidth_delta_relative`: The minimum percentage of runs that should have a time-average $\delta / W$ that is within the accepted range.
 
-Note that the variance in results is highly dependent on the simulation end time. The variance only becomes steady after $t = 100000$ s (approximately). However, running a test until this logical time would result in very high execution times. 
+Note that the variance in results is highly dependent on the simulation end time. The variance only becomes steady after $t = 100000$ s (approximately). However, running a test until this logical time would result in very high execution times and possibly errors regarding TCP/IP (see below). 
 
 # Problem with TCP/IP
 A problem is encountered regarding communication between AltWalker and GraphWalker. This communication is done via TCP/IP. However, a new port is opened for every request. As this test package tests every event that the SUT produces, and the SUT produces many events quickly, this will eventually result in an error: your computer system will run out of TCP/IP ports. To prevent this, the test script `test.py` will pause execution after it has done 1000 time advancements of the SUT. The execution of Python is paused for 121 minutes, because all TCP/IP ports will be closed after 2 minutes on Windows.
