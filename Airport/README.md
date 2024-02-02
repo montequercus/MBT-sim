@@ -17,7 +17,8 @@ manual check is needed for 10% of passengers. Only one passenger can be checked 
 time. After these scans, passengers can pick up their luggage, if it has traversed the conveyor belt.
 Picking up the luggage takes between 20 s to 40 s. There is a walking distance of 5 meters between
 all processes and the passengers walk with an average speed of 2.5 km/h.
-> !(flowchart.png)
+
+!(flowchart.png)
 
 # How to run
 This test package can be executed in two ways. Note that the SUT is placed in the 'tests' folder; this is so that it can also be run from the CLI. 
