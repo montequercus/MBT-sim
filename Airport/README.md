@@ -8,6 +8,8 @@ The test model does this by monitoring the arrivals and departures from each ser
 ## Details about SUT
 The functional requirements of the SUT are taken from a study exercise. Note that most of the described behavior can't be tested in the test package; only the service time distributions are for four servers can be tested.
 
+Taken from the associated [thesis report](https://repository.tudelft.nl/islandora/object/uuid:7a6ee58b-af74-450a-a54b-8511aae898e6?collection=education):
+
 > The system is a passenger check-in of a small airport. A new passenger arrives on average every 60 s. Passengers
 first go through a passport check, which takes between 30 s to 90 s with a median of 45 s. Then one
 passenger at a time can place one piece of hand luggage on an accumulating conveyor belt. Luggage
@@ -18,7 +20,7 @@ time. After these scans, passengers can pick up their luggage, if it has travers
 Picking up the luggage takes between 20 s to 40 s. There is a walking distance of 5 meters between
 all processes and the passengers walk with an average speed of 2.5 km/h.
 
-!(flowchart.png)
+<img src="flowchart.png" width="500">
 
 # How to run
 This test package can be executed in two ways. Note that the SUT is placed in the 'tests' folder; this is so that it can also be run from the CLI. 
