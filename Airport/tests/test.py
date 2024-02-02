@@ -2,9 +2,9 @@ import unittest
 import warnings
 import logging
 
-from . import Two_server_ABM_better as SUT # Import SUT from current folder, the 'tests' folder
-
-model1 = SUT.Airport(seed=1, logger_level=logging.INFO, show_messages=True)
+# from . import Two_server_ABM_better as SUT # Import SUT from current folder, the 'tests' folder
+from . import Airport as SUT
+model1 = SUT.Airport(seed=1, logger_level=logging.WARN, show_messages=True)
 # Change logger_level to logging.INFO for more info from SUT
 
 def setUpRun():
@@ -27,12 +27,6 @@ def name_in_list(name, list):
             break
     return bool_name_in_list
 
-def update_clock(clock):
-    if isinstance(clock, int):
-        clock += 1
-        return clock
-
-
 def time_advance(self, data):
     ## First advance time once
     model1.step() # Advance time
@@ -53,7 +47,7 @@ def time_advance(self, data):
             self.time_since_new_service += 1  # # Update clock
             # print(f"t = {self.time}, time since new service:{self.time_since_new_service}") # Debug
         # warnings.warn(f'{self.time}: NO MESSAGE, TIME ADVANCED')
-        if i > 200: # Prevent infinite while-loop
+        if i > 1500: # Prevent infinite while-loop
             warnings.warn('No messages to server for too long.')
             break
     else: # If there is a message, process it
@@ -159,7 +153,9 @@ class Server_with_queue(unittest.TestCase):
             # Look up component object
             components = {
                 'Passport check': model1.passport_check,
-                'Luggage placing': model1.luggage_placing
+                'Luggage placing': model1.luggage_placing,
+                'Passenger scan': model1.passenger_scan,
+                'Manual check': model1.manual_check
             }
             self.component = components[self.component_name]
         else:
