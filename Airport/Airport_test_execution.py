@@ -8,6 +8,8 @@ from altwalker.reporter import FileReporter, ClickReporter, Reporter, Reporting
 from altwalker.walker import Walker
 from altwalker.graphwalker import GraphWalkerClient, GraphWalkerService
 
+start_time = time.time()
+
 current_directory = os.getcwd()
 model_path_rel = 'models\Components.json'
 model_path_abs = os.path.join(current_directory, model_path_rel)
@@ -43,10 +45,24 @@ luggage_placing = {
     'service_time_max': 40
 }
 
+passenger_scan = {
+    'server_name': 'Passenger scan',
+    'service_time_min': 30,
+    'service_time_max': 85
+}
+
+manual_check = {
+    'server_name': 'Manual check',
+    'service_time_min': 120,
+    'service_time_max': 300
+}
+
+# Note: luggage pickup cannot be tested with test model. It is a server of infinite capacity with some additional logic about luggage on belt.
+
 ## Define experiment
 t_end = 10000 # Simulation end time
 seed_SUT = 77 # Seed used by SUT
-server_under_test = passport_check # SELECT SERVER TO BE TESTED
+server_under_test = passenger_scan # SELECT SERVER TO BE TESTED
 show_messages = False # Show messages from SUT
 
 ## Set experimental setup in SUT via graph
@@ -62,3 +78,6 @@ planner.set_data('show_messages', show_messages)
 walker.run()
 gw_service.kill()
 
+end_time = time.time()
+execution_time = end_time - start_time
+print(execution_time)
